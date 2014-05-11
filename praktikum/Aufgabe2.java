@@ -81,15 +81,16 @@ public class Aufgabe2 {
     				cipherBlk = serv.getNextCipherBlock();
 					pos = pos + 1;
 					
+					int i = 1;
+					
     				while(cipherBlk.compareTo(blankZeichen) == 0){
     					cipherBlk = serv.getNextCipherBlock();
     					pos = pos + 1;
+    					i++;
     				}
     				
-    				int i = 0;
-    				
-    				//um zu pruefen, ob es einen Beitrag in den Formular gibt 
-    				while((Arrays.binarySearch(zahlZeichen, cipherBlk) != -1) && (i < 4)){
+    				//um zu pruefen, ob es Zaehlen in den Formular gibt 
+    				while((Arrays.binarySearch(zahlZeichen, cipherBlk) != -1) && (i < 6)){
     					cipherBlk = serv.getNextCipherBlock();
     					i++;
     					pos = pos + 1;
