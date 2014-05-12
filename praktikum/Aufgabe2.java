@@ -50,69 +50,111 @@ public class Aufgabe2 {
         */
 		     
         //=======================================================
-    	//alle Ziffer, die wir suchen sollen. D M _ {0...9 , .}
-    	byte dParm = 'D';
-    	byte mParm = 'M';
-    	byte blankParm = ' ';
-    	byte[] zahlParm = new byte[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ','};
-    	
-    	BigInteger dZeichen = serv.generateCipherBlock(dParm);
-    	BigInteger mZeichen = serv.generateCipherBlock(mParm);
-    	BigInteger blankZeichen = serv.generateCipherBlock(blankParm);
-    	BigInteger[] zahlZeichen = new BigInteger[12];
-    	for(int i = 0; i < 12; i++){
-    		zahlZeichen[i] = serv.generateCipherBlock(zahlParm[i]); 
-    	}
-    	
-    	Arrays.sort(zahlZeichen);
-    	
-    	boolean hit = false;
-    	int pos = 1;//die aktuelle Position der Stelle
-    	int tmp = 0;
-    	BigInteger cipherBlk = serv.getNextCipherBlock();
-    	
-    	do{
-    		if(cipherBlk.compareTo(dZeichen) == 0){
-    			cipherBlk = serv.getNextCipherBlock();
-    			tmp = pos;// speichern die Position der möglichen Anfangsstelle
-    			pos = pos + 1;
-    			if(cipherBlk.compareTo(mZeichen) == 0){
-    				
-    				cipherBlk = serv.getNextCipherBlock();
-					pos = pos + 1;
-					
-					int i = 1;
-					
-    				while(cipherBlk.compareTo(blankZeichen) == 0){
-    					cipherBlk = serv.getNextCipherBlock();
-    					pos = pos + 1;
-    					i++;
-    				}
-    				
-    				//um zu pruefen, ob es Zaehlen in den Formular gibt 
-    				while((Arrays.binarySearch(zahlZeichen, cipherBlk) != -1) && (i < 6)){
-    					cipherBlk = serv.getNextCipherBlock();
-    					i++;
-    					pos = pos + 1;
-    					hit = true;
-    				}
-    				
-    			}
-    		}
-    		cipherBlk = serv.getNextCipherBlock();
-    		pos = pos + 1;
-    	}while(!hit);
-    	
-//    	bin nicht sicher, ob das Ergebnis geprueft werden soll
-//    	serv.checkStartBlockPos(tmp);
-
-
-
-        //===================================================================
-        /* Bis hier implementieren                                         *//* implement up to here                                              */
-        //===================================================================
-
+    	//=======================================================
+        //alle Ziffer, die wir suchen sollen. D M _ {0...9 , .}
+        byte dParm = 'D';
+        byte mParm = 'M';
+        byte blankParm = ' ';
+        byte[] zahlParm = new byte[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ','};
+       
+        BigInteger dZeichen = serv.generateCipherBlock(dParm);
+        BigInteger mZeichen = serv.generateCipherBlock(mParm);
+        BigInteger blankZeichen = serv.generateCipherBlock(blankParm);
+        BigInteger[] zahlZeichen = new BigInteger[12];
+        for(int i = 0; i < 12; i++){
+        	zahlZeichen[i] = serv.generateCipherBlock(zahlParm[i]);
+        }
+       
+        Arrays.sort(zahlZeichen);
+       
+        boolean hit = false;
+        boolean treff = false; //hilft dabei zu erkennen, ob DM_Z erkannt wurde. Vermeidet DDM.
+        int pos = 1 ;//die aktuelle Position der Stelle
+        int startBlockPos =-1;
+        BigInteger cipherBlk = serv.getNextCipherBlock();
+        
+        
+       
+        do{ //Vergleich jeder Block mit dem verschlüsselten Zeichen in der Reihenfolge DM_Z, wobei _= Leerzeichen und Z=Ziffer
+        	if(cipherBlk.compareTo(dZeichen) == 0){
+        		System.out.println("Ein D wurde gefunden in der Position " + pos);
+        		treff = true;     //Ein D wurde gefunden
+        		startBlockPos=pos-1;
+        		cipherBlk = serv.getNextCipherBlock();
+        		pos = pos + 1;
+        		     		
+        		if(cipherBlk.compareTo(mZeichen) == 0){
+       
+        				cipherBlk = serv.getNextCipherBlock();
+        				pos = pos + 1;
+        				int i = 1;
+        				System.out.println("Ein M wurde gefunden");
+        				treff=false;
+        				
+        				if (cipherBlk.compareTo(blankZeichen) == 0){
+        				
+        					while(cipherBlk.compareTo(blankZeichen) == 0){ //i ist gleich der Anzahl von Leerzeichen
+        						cipherBlk = serv.getNextCipherBlock();
+        						pos = pos + 1;
+        						i++;
+        						System.out.println("Ein Leerzeichen wurde gefunden");
+        					}
+        				}
+        				else{ 
+        					treff = false;
+        					System.out.println("Ops. Kein Leerzeichen");
+        					startBlockPos = -1;
+        				}
+       
+        				//um zu pruefen, ob es einen Beitrag in dem Formular gibt
+        				if (Arrays.binarySearch(zahlZeichen, cipherBlk) == -1) { 
+        					treff = false;
+        					System.out.println("Ops. Kein Symbol");
+        					startBlockPos = -1;
+        					
+        				}
+        				else {
+        					while((Arrays.binarySearch(zahlZeichen, cipherBlk) != -1) && (i < 6)){
+        						System.out.println("Ein Symbol wurde gefunden");
+        						cipherBlk = serv.getNextCipherBlock();
+        						i++;
+        						pos = pos + 1;
+        						hit = true; //wir sind am Ende der Durchsuchung
+        						
+        					}
+        				}
+        				
+        		}
+        		else { 
+        			
+        			System.out.println("Ops...Kein M.");
+        			startBlockPos = -1;
+        		}
+        	}
+        	else{
+        		
+        		treff=false;
+        		System.out.println("Ops...kein D");
+        		startBlockPos = -1;
+        	}
+        	
+        		
+        	
+        	if (!treff){
+        		cipherBlk = serv.getNextCipherBlock(); //der Block enthält kein "D"
+        		pos++; // Wo befindet sich die Suche
+        	}
+        	
+        }while((!hit) && ((cipherBlk != null))); //Bedingung für den Abbruch 
+     
+        
+     if (startBlockPos!=-1)
+    	 System.out.println("Der gesuchte Block befindet sich in der Position : " + startBlockPos);
+     else 
+    	 System.out.println("Kein passender Block wurde gefunden");
+     
     }
+    
 
 
     /**
