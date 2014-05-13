@@ -101,7 +101,7 @@ public class BlG {
 
 	/* Klartext zurückgeben */
 
-        return null;
+        return klartext;
         //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 
