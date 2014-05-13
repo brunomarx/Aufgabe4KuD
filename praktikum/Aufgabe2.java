@@ -88,7 +88,7 @@ public class Aufgabe2 {
     					pos = pos + 1;
     					i++;
     				}
-    				
+    			
     				//um zu pruefen, ob es Zaehlen in den Formular gibt 
     				while((Arrays.binarySearch(zahlZeichen, cipherBlk) != -1) && (i < 6)){
     					cipherBlk = serv.getNextCipherBlock();
