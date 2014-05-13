@@ -23,7 +23,7 @@ public class Aufgabe3 {
     
     public static void main(String[] argv){
 
-	
+
 	/* Der folgende Teil ist nötig für die Internationalisierung  */
 	Locale currentLocale; 
 	currentLocale = Locale.getDefault(); 
@@ -31,23 +31,23 @@ public class Aufgabe3 {
  
 
 	/* Schlüssel generieren */
-	
+
 	System.out.println(messages.getString("Main4bGenKey"));
 	BlGKeyGenerator keyGen = new BlGKeyGenerator();
 	/* Klartext setzen */
-	
+
 	String plainString = "Hello World!";
 
 	System.out.println(messages.getString("Main4bPlTxt")+plainString);
 
 	/* Klartext in BigInteger umwandeln */
-	
+
 	BigInteger plainText = new BigInteger(plainString.getBytes());
 	System.out.println(messages.getString("Main4bPlTxtD")+plainText.toString()+"\n");
 
 
 	/* Verschlüsseln */
-	
+
 	BlG blg = new BlG();
 	BlGCipherText ciph = blg.encryptStream(keyGen.getPublicKey(),
 					       plainText,
@@ -59,7 +59,7 @@ public class Aufgabe3 {
 			   + ciph.zustand.toString()+"\n");
 
 	/* wieder entschlüsseln */
-	
+
 	BigInteger newPlainText = blg.decryptStream(keyGen.getPrivateKey(),
 						    ciph);
 	System.out.println(messages.getString("Main4bPlTxtD2")+newPlainText.toString());
