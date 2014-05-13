@@ -58,7 +58,11 @@ public class BlG {
         BlGCipherText ciph = new BlGCipherText();
 
         //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        // Hier implementieren
+        BigInteger Bitkette;
+        Bitkette = bbs.Tick(pubKey, null , len); //BitKette erhaelt die zufaellige Bitfolge
+        ciph.cipherText= Bitkette.xor(plainStream); //Ciph bekommt Ergebniss von XOR(BitFolge,Klartext)
+        ciph.cipherLen = len; // Alle Nachrichten bzw. Bitfolgen haben dieselbe Laenge
+        ciph.zustand = bbs.getZustand(); // Der Generator liefert den letzten Zustand
         //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 	/* Die Parameter des ciph-Objektes (cipherText, cipherLen, zustand) erzeugen und in das ciph-Objekt schreiben. */
@@ -85,7 +89,10 @@ public class BlG {
 	BBS bbs = new BBS();
 
 	//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-	/* Hier implementieren (Entschlüsselung)                              */
+	BigInteger klartext; //Variable fuers Speichern des Klartextes
+	BigInteger Bitkette; // Variable fuer die Bitfolge als Egebniss von Tickback
+	Bitkette = bbs.TickBack(privKey, ciph.zustand, ciph.cipherLen); //Bitkette bekommt die Bitfolge
+	klartext= Bitkette.xor(ciph.cipherText); //Variable bekommt XOR(ciph,Bitfolge)
 	//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 
